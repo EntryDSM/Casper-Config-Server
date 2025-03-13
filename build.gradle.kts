@@ -1,8 +1,8 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
-    id("org.springframework.boot") version "3.4.3"
-    id("io.spring.dependency-management") version "1.1.7"
+    kotlin(Plugins.Kotlin.JVM) version Versions.KOTLIN
+    kotlin(Plugins.Kotlin.SPRING) version Versions.KOTLIN
+    id(Plugins.SPRING_BOOT) version Versions.SPRING_BOOT
+    id(Plugins.SPRING_DEPENDENCY_MANAGEMENT) version Versions.SPRING_DEPENDENCY_MANAGEMENT
 }
 
 group = "hs.kr.casper"
@@ -10,7 +10,7 @@ version = "0.0.1-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(Versions.JAVA_VERSION)
     }
 }
 
@@ -18,12 +18,24 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${Versions.SPRING_CLOUD}")
+    }
+}
+
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation(Dependencies.Spring.BOOT_STARTER)
+    implementation(Dependencies.Kotlin.REFLECT)
+
+    implementation(Dependencies.SpringCloud.CONFIG_SERVER)
+    implementation(Dependencies.Spring.BOOT_ACTUATOR)
+    implementation(Dependencies.SpringCloud.BOOTSTRAP)
+    implementation(Dependencies.SpringCloud.BUS_AMQP)
+
+    testImplementation(Dependencies.Spring.BOOT_TEST)
+    testImplementation(Dependencies.Kotlin.TEST_JUNIT5)
+    testRuntimeOnly(Dependencies.Testing.JUNIT_PLATFORM_LAUNCHER)
 }
 
 kotlin {
