@@ -13,7 +13,6 @@ object Dependencies {
     object SpringCloud {
         const val CONFIG_SERVER = "org.springframework.cloud:spring-cloud-config-server"
         const val BOOTSTRAP = "org.springframework.cloud:spring-cloud-starter-bootstrap"
-        const val BUS_AMQP = "org.springframework.cloud:spring-cloud-starter-bus-amqp"
     }
 
     object JPA {

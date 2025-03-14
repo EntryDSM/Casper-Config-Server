@@ -31,7 +31,6 @@ dependencies {
     implementation(Dependencies.SpringCloud.CONFIG_SERVER)
     implementation(Dependencies.Spring.BOOT_ACTUATOR)
     implementation(Dependencies.SpringCloud.BOOTSTRAP)
-    implementation(Dependencies.SpringCloud.BUS_AMQP)
 
     implementation(Dependencies.JPA.SPRING_DATA_JPA)
 
