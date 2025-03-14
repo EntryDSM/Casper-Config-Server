@@ -33,6 +33,10 @@ dependencies {
     implementation(Dependencies.SpringCloud.BOOTSTRAP)
     implementation(Dependencies.SpringCloud.BUS_AMQP)
 
+    implementation(Dependencies.JPA.SPRING_DATA_JPA)
+
+    runtimeOnly(Dependencies.MySQL.CONNECTOR_JAVA)
+
     testImplementation(Dependencies.Spring.BOOT_TEST)
     testImplementation(Dependencies.Kotlin.TEST_JUNIT5)
     testRuntimeOnly(Dependencies.Testing.JUNIT_PLATFORM_LAUNCHER)

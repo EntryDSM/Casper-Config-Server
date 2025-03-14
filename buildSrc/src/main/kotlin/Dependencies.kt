@@ -16,6 +16,14 @@ object Dependencies {
         const val BUS_AMQP = "org.springframework.cloud:spring-cloud-starter-bus-amqp"
     }
 
+    object JPA {
+        const val SPRING_DATA_JPA = "org.springframework.boot:spring-boot-starter-data-jpa"
+    }
+
+    object MySQL {
+        const val CONNECTOR_JAVA = "com.mysql:mysql-connector-j"
+    }
+
     object Testing {
         const val JUNIT_PLATFORM_LAUNCHER = "org.junit.platform:junit-platform-launcher"
     }
