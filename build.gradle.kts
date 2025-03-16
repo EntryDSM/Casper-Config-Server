@@ -1,8 +1,7 @@
-import org.apache.tools.ant.taskdefs.optional.depend.Depend
-
 plugins {
     kotlin(Plugins.Kotlin.JVM) version Versions.KOTLIN
     kotlin(Plugins.Kotlin.SPRING) version Versions.KOTLIN
+    kotlin(Plugins.Kotlin.JPA) version Versions.KOTLIN
     id(Plugins.SPRING_BOOT) version Versions.SPRING_BOOT
     id(Plugins.SPRING_DEPENDENCY_MANAGEMENT) version Versions.SPRING_DEPENDENCY_MANAGEMENT
 }
