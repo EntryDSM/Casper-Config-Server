@@ -19,6 +19,10 @@ object Dependencies {
         const val SPRING_DATA_JPA = "org.springframework.boot:spring-boot-starter-data-jpa"
     }
 
+    object Lombok {
+        const val LOMBOK = "org.projectlombok:lombok"
+    }
+
     object MySQL {
         const val CONNECTOR_JAVA = "com.mysql:mysql-connector-j"
     }

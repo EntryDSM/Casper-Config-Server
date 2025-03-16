@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.optional.depend.Depend
+
 plugins {
     kotlin(Plugins.Kotlin.JVM) version Versions.KOTLIN
     kotlin(Plugins.Kotlin.SPRING) version Versions.KOTLIN
@@ -33,6 +35,7 @@ dependencies {
     implementation(Dependencies.SpringCloud.BOOTSTRAP)
 
     implementation(Dependencies.JPA.SPRING_DATA_JPA)
+    implementation(Dependencies.Lombok.LOMBOK)
 
     runtimeOnly(Dependencies.MySQL.CONNECTOR_JAVA)
 
