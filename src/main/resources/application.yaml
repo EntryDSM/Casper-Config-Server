@@ -20,7 +20,12 @@ spring:
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
   jpa:
-    open-in-view: false
+    open-in-view: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
 
 encrypt:
   key: ${ENCRYPT_KEY}
@@ -38,3 +43,5 @@ logging:
   level:
     org.springframework.cloud: INFO
     org.springframework.jdbc: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
