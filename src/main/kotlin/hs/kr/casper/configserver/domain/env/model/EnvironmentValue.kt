@@ -1,4 +1,4 @@
-package hs.kr.casper.configserver.domain.env.model.env
+package hs.kr.casper.configserver.domain.env.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
