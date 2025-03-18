@@ -4,6 +4,11 @@ object Dependencies {
         const val TEST_JUNIT5 = "org.jetbrains.kotlin:kotlin-test-junit5"
     }
 
+    object KAPT {
+        const val MAPSTRUCT_PROCESSOR = "org.mapstruct:mapstruct-processor:1.5.5.Final"
+        const val MAPSTRUCT = "org.mapstruct:mapstruct:1.5.5.Final"
+    }
+
     object Spring {
         const val BOOT_STARTER = "org.springframework.boot:spring-boot-starter"
         const val BOOT_TEST = "org.springframework.boot:spring-boot-starter-test"
