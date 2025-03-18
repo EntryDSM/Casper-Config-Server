@@ -1,4 +1,4 @@
-package hs.kr.casper.configserver.domain.env.model
+package hs.kr.casper.configserver.infrastructure.persistence.env
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -7,8 +7,8 @@ import jakarta.persistence.Id
 import org.hibernate.annotations.GenericGenerator
 import java.util.*
 
-@Entity(name = "environment_value")
-data class EnvironmentConfiguration(
+@Entity(name = "tbl_environment_configuration")
+data class EnvironmentConfigurationJpaEntity(
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(
