@@ -4,9 +4,9 @@ import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentOperat
 import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentValueResponse
 
 interface SingleEnvironmentConfigurationUseCase {
-    fun retrieveValue(application: String, profile: String, label: String, key: String): EnvironmentValueResponse
+    fun retrieveConfiguration(application: String, profile: String, label: String, key: String): EnvironmentValueResponse
 
-    fun storeValue(application: String, profile: String, label: String, key: String, value: String): EnvironmentOperationResponse
+    fun storeConfiguration(application: String, profile: String, label: String, key: String, value: String): EnvironmentOperationResponse
 
-    fun removeValue(application: String, profile: String, label: String, key: String): EnvironmentOperationResponse
+    fun removeConfiguration(application: String, profile: String, label: String, key: String): EnvironmentOperationResponse
 }
