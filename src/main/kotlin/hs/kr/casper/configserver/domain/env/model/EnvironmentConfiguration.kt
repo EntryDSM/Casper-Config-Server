@@ -5,10 +5,10 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import org.hibernate.annotations.GenericGenerator
-import java.util.UUID
+import java.util.*
 
 @Entity(name = "environment_value")
-data class EnvironmentValue(
+data class EnvironmentConfiguration(
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(
