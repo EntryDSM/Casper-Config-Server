@@ -3,7 +3,7 @@ plugins {
     kotlin(Plugins.Kotlin.SPRING) version Versions.KOTLIN
     kotlin(Plugins.Kotlin.JPA) version Versions.KOTLIN
     kotlin(Plugins.Kotlin.KAPT) version Versions.KOTLIN
-    kotlin("plugin.allopen") version Versions.KOTLIN
+    kotlin(Plugins.Kotlin.ALLOPEN) version Versions.KOTLIN
     id(Plugins.SPRING_BOOT) version Versions.SPRING_BOOT
     id(Plugins.SPRING_DEPENDENCY_MANAGEMENT) version Versions.SPRING_DEPENDENCY_MANAGEMENT
 }
