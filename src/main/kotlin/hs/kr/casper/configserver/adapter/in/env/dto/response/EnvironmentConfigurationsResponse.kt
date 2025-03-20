@@ -1,12 +1,8 @@
 package hs.kr.casper.configserver.adapter.`in`.env.dto.response
 
-import java.util.*
-
-data class EnvironmentValueResponse(
-    val id: UUID,
+data class EnvironmentConfigurationsResponse(
     val application: String,
     val profile: String,
     val label: String,
-    val key: String,
-    val value: String
+    val properties: Map<String, String>,
 )

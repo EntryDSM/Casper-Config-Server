@@ -18,9 +18,9 @@ data class EnvironmentConfigurationJpaEntity(
         name = "id",
         nullable = false,
         updatable = false,
-        columnDefinition = "VARCHAR(36)"
+        columnDefinition = "BINARY(16)"
     )
-    val id: UUID,
+    val id: UUID = UUID.randomUUID(),
 
     @Column(
         name = "application",

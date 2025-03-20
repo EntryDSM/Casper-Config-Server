@@ -1,6 +1,6 @@
 package hs.kr.casper.configserver.adapter.`in`.env.dto.request
 
-data class EnvironmentValuesRequest(
+data class EnvironmentConfigurationRequest(
     val application: String,
     val profile: String,
     val label: String,

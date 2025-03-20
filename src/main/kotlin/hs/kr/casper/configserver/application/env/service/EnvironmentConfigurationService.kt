@@ -1,31 +1,49 @@
 package hs.kr.casper.configserver.application.env.service
 
-import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentConfigurationResponse
+import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentConfigurationsResponse
 import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentOperationResponse
-import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentValueResponse
-import hs.kr.casper.configserver.application.env.port.`in`.MultiEnvironmentConfigurationUseCase
-import hs.kr.casper.configserver.application.env.port.`in`.SingleEnvironmentConfigurationUseCase
+import hs.kr.casper.configserver.application.env.port.`in`.EnvironmentConfigurationUseCase
+import hs.kr.casper.configserver.application.env.port.out.RetrieveConfigurationPort
+import hs.kr.casper.configserver.application.env.port.out.StoreConfigurationPort
+import hs.kr.casper.configserver.domain.env.model.EnvironmentConfiguration
+import hs.kr.casper.configserver.domain.env.model.enum.EnvironmentOperationType
 import org.springframework.stereotype.Service
 
 @Service
 class EnvironmentConfigurationService(
+    private val retrieveConfigurationPort: RetrieveConfigurationPort,
+    private val storeConfigurationPort: StoreConfigurationPort
+): EnvironmentConfigurationUseCase {
 
-): MultiEnvironmentConfigurationUseCase, SingleEnvironmentConfigurationUseCase {
     override fun storeConfiguration(
         application: String,
         profile: String,
         label: String,
-        key: String,
-        value: String
+        properties: Map<String, String>
     ): EnvironmentOperationResponse {
-        TODO("Not yet implemented")
+
+        properties.forEach { (key, value) ->
+            storeConfigurationPort.storeConfiguration(
+                EnvironmentConfiguration(
+                    application = application,
+                    profile = profile,
+                    label = label,
+                    key = key,
+                    value = value
+                )
+            )
+        }
+
+        return EnvironmentOperationResponse(
+            success = true,
+            operation = EnvironmentOperationType.STORE
+        )
     }
 
     override fun removeConfiguration(
         application: String,
         profile: String,
-        label: String,
-        key: String
+        label: String
     ): EnvironmentOperationResponse {
         TODO("Not yet implemented")
     }
@@ -33,33 +51,8 @@ class EnvironmentConfigurationService(
     override fun retrieveConfiguration(
         application: String,
         profile: String,
-        label: String,
-        key: String
-    ): EnvironmentValueResponse {
-        TODO("Not yet implemented")
-    }
-
-    override fun removeConfigurations(
-        application: String,
-        profile: String,
         label: String
-    ): EnvironmentOperationResponse {
-        TODO("Not yet implemented")
-    }
-
-    override fun retrieveConfigurations(
-        application: String,
-        profile: String,
-        label: String
-    ): EnvironmentConfigurationResponse {
-        TODO("Not yet implemented")
-    }
-
-    override fun storeConfigurations(
-        application: String,
-        profile: String,
-        label: String
-    ): EnvironmentOperationResponse {
+    ): EnvironmentConfigurationsResponse {
         TODO("Not yet implemented")
     }
 }

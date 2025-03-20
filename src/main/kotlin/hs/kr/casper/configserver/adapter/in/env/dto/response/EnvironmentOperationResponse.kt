@@ -5,8 +5,6 @@ import java.time.LocalDateTime
 
 data class EnvironmentOperationResponse(
     val success: Boolean,
-    val message: String,
     val timestamp: LocalDateTime = LocalDateTime.now(),
     val operation: EnvironmentOperationType,
-    val affectedKeys: List<String> = emptyList()
 )
