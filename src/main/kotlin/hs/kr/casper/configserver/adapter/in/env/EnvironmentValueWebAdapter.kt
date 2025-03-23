@@ -4,6 +4,7 @@ import hs.kr.casper.configserver.adapter.`in`.env.dto.request.EnvironmentConfigu
 import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentConfigurationResponse
 import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentOperationResponse
 import hs.kr.casper.configserver.application.env.port.`in`.EnvironmentConfigurationUseCase
+import hs.kr.casper.configserver.domain.env.model.enum.EnvironmentOperationType
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -25,18 +26,19 @@ class EnvironmentValueWebAdapter(
         @RequestBody
         environmentConfigurationRequest: EnvironmentConfigurationRequest
     ): ResponseEntity<EnvironmentOperationResponse> {
-        val response = environmentConfigurationUseCase.storeConfiguration(
-            application = environmentConfigurationRequest.application,
-            profile = environmentConfigurationRequest.profile,
-            label = environmentConfigurationRequest.label,
-            properties = environmentConfigurationRequest.properties
+        return runCatching {
+            environmentConfigurationUseCase.storeConfiguration(
+                application = environmentConfigurationRequest.application,
+                profile = environmentConfigurationRequest.profile,
+                label = environmentConfigurationRequest.label,
+                properties = environmentConfigurationRequest.properties
+            )
+        }.fold(
+            onSuccess = { ResponseEntity.status(HttpStatus.CREATED).body(it) },
+            onFailure = { ResponseEntity.status(HttpStatus.CONFLICT).body(
+                EnvironmentOperationResponse(operation = EnvironmentOperationType.STORE, isSuccess = false)
+            ) }
         )
-
-        return if (response.isSuccess) {
-            ResponseEntity.status(HttpStatus.CREATED).body(response)
-        } else {
-            ResponseEntity.status(HttpStatus.CONFLICT).body(response)
-        }
     }
 
     @GetMapping("/{application}/{profile}/{label}")
