@@ -4,11 +4,11 @@ import hs.kr.casper.configserver.infrastructure.persistence.env.EnvironmentConfi
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface EnvironmentConfigurationRepository : JpaRepository<EnvironmentConfigurationJpaEntity, Long> {
-    fun deleteByApplicationAndProfileAndLabelAndKey(application: String, profile: String, label: String, key: String): EnvironmentConfigurationJpaEntity
+    fun deleteByApplicationAndProfileAndLabelAndKey(application: String, profile: String, label: String, key: String)
 
-    fun deleteByApplicationAndProfileAndLabel(application: String, profile: String, label: String): List<EnvironmentConfigurationJpaEntity>
-
-    fun findByApplicationAndProfileAndLabelAndKey(application: String, profile: String, label: String, key: String): EnvironmentConfigurationJpaEntity
+    fun existsAllByApplicationAndProfileAndLabelAndKey(application: String, profile: String, label: String, key: String): Boolean
 
     fun findByApplicationAndProfileAndLabel(application: String, profile: String, label: String): List<EnvironmentConfigurationJpaEntity>
+
+    fun findByApplicationAndProfileAndLabelAndKey(application: String, profile: String, label: String, key: String): List<EnvironmentConfigurationJpaEntity>
 }

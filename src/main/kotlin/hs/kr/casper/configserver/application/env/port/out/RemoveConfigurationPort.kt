@@ -5,4 +5,6 @@ import hs.kr.casper.configserver.infrastructure.persistence.env.EnvironmentConfi
 
 interface RemoveConfigurationPort {
     fun removeConfiguration(configuration: EnvironmentConfiguration): EnvironmentConfigurationJpaEntity
+
+    fun removeConfigurations(application: String, profile: String, label: String): Map<String, String>
 }

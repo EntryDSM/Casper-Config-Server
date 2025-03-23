@@ -6,6 +6,6 @@ import org.mapstruct.Mapper
 
 @Mapper(componentModel = "spring")
 interface EnvironmentConfigurationMapper {
-    fun toDomain(entity: EnvironmentConfigurationJpaEntity): EnvironmentConfiguration
     fun toEntity(domain: EnvironmentConfiguration): EnvironmentConfigurationJpaEntity
+    fun toDomain(entity: EnvironmentConfigurationJpaEntity): EnvironmentConfiguration
 }
