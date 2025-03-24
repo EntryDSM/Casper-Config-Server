@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: Casper-Config-Server
+  web:
+    resources:
+      add-mappings: false
   profiles:
     active: jdbc
   cloud:
@@ -45,3 +48,4 @@ logging:
     org.springframework.jdbc: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
