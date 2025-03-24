@@ -4,7 +4,6 @@ import hs.kr.casper.configserver.adapter.`in`.env.dto.request.EnvironmentConfigu
 import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentConfigurationResponse
 import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentOperationResponse
 import hs.kr.casper.configserver.application.env.port.`in`.EnvironmentConfigurationUseCase
-import hs.kr.casper.configserver.domain.env.model.enum.EnvironmentOperationType
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -26,19 +25,13 @@ class EnvironmentValueWebAdapter(
         @RequestBody
         environmentConfigurationRequest: EnvironmentConfigurationRequest
     ): ResponseEntity<EnvironmentOperationResponse> {
-        return runCatching {
-            environmentConfigurationUseCase.storeConfiguration(
-                application = environmentConfigurationRequest.application,
-                profile = environmentConfigurationRequest.profile,
-                label = environmentConfigurationRequest.label,
-                properties = environmentConfigurationRequest.properties
-            )
-        }.fold(
-            onSuccess = { ResponseEntity.status(HttpStatus.CREATED).body(it) },
-            onFailure = { ResponseEntity.status(HttpStatus.CONFLICT).body(
-                EnvironmentOperationResponse(operation = EnvironmentOperationType.STORE, isSuccess = false)
-            ) }
+        val response = environmentConfigurationUseCase.storeConfiguration(
+            application = environmentConfigurationRequest.application,
+            profile = environmentConfigurationRequest.profile,
+            label = environmentConfigurationRequest.label,
+            properties = environmentConfigurationRequest.properties
         )
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @GetMapping("/{application}/{profile}/{label}")
@@ -49,12 +42,13 @@ class EnvironmentValueWebAdapter(
         profile: String,
         @PathVariable
         label: String
-    ): EnvironmentConfigurationResponse {
-        return environmentConfigurationUseCase.retrieveEnvironmentConfigurations(
+    ): ResponseEntity<EnvironmentConfigurationResponse> {
+        val response = environmentConfigurationUseCase.retrieveEnvironmentConfigurations(
             application = application,
             profile = profile,
             label = label
         )
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{application}/{profile}/{label}/{key}")
@@ -67,13 +61,14 @@ class EnvironmentValueWebAdapter(
         label: String,
         @PathVariable
         key: String
-    ): EnvironmentConfigurationResponse {
-        return environmentConfigurationUseCase.retrieveEnvironmentConfiguration(
+    ): ResponseEntity<EnvironmentConfigurationResponse> {
+        val response = environmentConfigurationUseCase.retrieveEnvironmentConfiguration(
             application = application,
             profile = profile,
             label = label,
             key = key
         )
+        return ResponseEntity.ok(response)
     }
 
     @DeleteMapping("/{application}/{profile}/{label}")
@@ -84,12 +79,13 @@ class EnvironmentValueWebAdapter(
         profile: String,
         @PathVariable
         label: String
-    ) : EnvironmentOperationResponse{
-        return environmentConfigurationUseCase.removeConfigurations(
+    ): ResponseEntity<EnvironmentOperationResponse> {
+        val response = environmentConfigurationUseCase.removeConfigurations(
             application,
             profile,
             label
         )
+        return ResponseEntity.ok(response)
     }
 
     @DeleteMapping("/{application}/{profile}/{label}/{key}")
@@ -102,12 +98,13 @@ class EnvironmentValueWebAdapter(
         label: String,
         @PathVariable
         key: String
-    ) : EnvironmentOperationResponse{
-        return environmentConfigurationUseCase.removeConfiguration(
-            application,
-            profile,
-            label,
-            key
+    ): ResponseEntity<EnvironmentOperationResponse> {
+        val response = environmentConfigurationUseCase.removeConfiguration(
+            application = application,
+            profile = profile,
+            label = label,
+            key = key
         )
+        return ResponseEntity.ok(response)
     }
 }

@@ -9,6 +9,7 @@ import hs.kr.casper.configserver.application.env.port.out.RetrieveConfigurationP
 import hs.kr.casper.configserver.application.env.port.out.StoreConfigurationPort
 import hs.kr.casper.configserver.domain.env.model.EnvironmentConfiguration
 import hs.kr.casper.configserver.domain.env.model.enum.EnvironmentOperationType
+import hs.kr.casper.configserver.infrastructure.exception.EntryException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,38 +21,34 @@ class EnvironmentConfigurationService(
     private val existsConfigurationPort: ExistsConfigurationPort
 ): EnvironmentConfigurationUseCase {
 
-    @Transactional
-    override fun storeConfiguration(
-        application: String,
-        profile: String,
-        label: String,
-        properties: Map<String, String>
-    ): EnvironmentOperationResponse {
-        val duplicateKeys = properties.keys.filter { key ->
-            existsConfigurationPort.existsConfiguration(application, profile, label, key)
-        }
+        @Transactional
+        override fun storeConfiguration(
+            application: String,
+            profile: String,
+            label: String,
+            properties: Map<String, String>
+        ): EnvironmentOperationResponse {
+            val duplicateKeys = properties.keys.filter { key ->
+                existsConfigurationPort.existsConfiguration(application, profile, label, key)
+            }
 
-        if (duplicateKeys.isNotEmpty()) {
-            return EnvironmentOperationResponse(
-                isSuccess = false,
-                operation = EnvironmentOperationType.STORE
-            )
-        }
+            if (duplicateKeys.isNotEmpty()) {
+                throw EntryException.conflict("이미 {${duplicateKeys.joinToString()}} 키가 존재합니다.")
+            }
 
-        properties.entries.forEach { (key, value) ->
-            storeConfigurationPort.storeConfiguration(
-                EnvironmentConfiguration(
-                    application = application,
-                    profile = profile,
-                    label = label,
-                    key = key,
-                    value = value
+            properties.entries.forEach { (key, value) ->
+                storeConfigurationPort.storeConfiguration(
+                    EnvironmentConfiguration(
+                        application = application,
+                        profile = profile,
+                        label = label,
+                        key = key,
+                        value = value
+                    )
                 )
-            )
-        }
+            }
 
         return EnvironmentOperationResponse(
-            isSuccess = true,
             operation = EnvironmentOperationType.STORE
         )
     }
@@ -67,6 +64,10 @@ class EnvironmentConfigurationService(
             profile = profile,
             label = label,
         )
+
+        if (configurations.isEmpty()) {
+            throw EntryException.notFound("해당하는 환경 설정이 없습니다.")
+        }
 
         return EnvironmentConfigurationResponse(
             application = application,
@@ -90,6 +91,10 @@ class EnvironmentConfigurationService(
             key = key
         )
 
+        if (configuration.isEmpty()) {
+            throw EntryException.notFound("해당하는 환경 설정이 없습니다.")
+        }
+
         return EnvironmentConfigurationResponse(
             application = application,
             profile = profile,
@@ -110,6 +115,10 @@ class EnvironmentConfigurationService(
             label = label
         )
 
+        if (configurations.isEmpty()) {
+            throw EntryException.notFound("해당하는 환경 설정이 없습니다.")
+        }
+
         configurations.keys.forEach { key ->
             removeConfigurationPort.removeConfiguration(
                 EnvironmentConfiguration(
@@ -123,7 +132,6 @@ class EnvironmentConfigurationService(
         }
 
         return EnvironmentOperationResponse(
-            isSuccess = true,
             operation = EnvironmentOperationType.REMOVE
         )
     }
@@ -142,6 +150,10 @@ class EnvironmentConfigurationService(
             key = key
         )
 
+        if (configuration.isEmpty()) {
+            throw EntryException.notFound("해당하는 환경 설정이 없습니다.")
+        }
+
         removeConfigurationPort.removeConfiguration(
             EnvironmentConfiguration(
                 application = application,
@@ -153,7 +165,6 @@ class EnvironmentConfigurationService(
         )
 
         return EnvironmentOperationResponse(
-            isSuccess = true,
             operation = EnvironmentOperationType.REMOVE
         )
     }

@@ -4,7 +4,6 @@ import hs.kr.casper.configserver.domain.env.model.enum.EnvironmentOperationType
 import java.time.LocalDateTime
 
 data class EnvironmentOperationResponse(
-    val isSuccess: Boolean,
-    val timeStamp: LocalDateTime = LocalDateTime.now(),
     val operation: EnvironmentOperationType,
+    val timeStamp: LocalDateTime = LocalDateTime.now(),
 )
