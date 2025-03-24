@@ -1,6 +1,7 @@
 package hs.kr.casper.configserver.infrastructure.error.handler
 
 import hs.kr.casper.configserver.infrastructure.error.ErrorResponse
+import hs.kr.casper.configserver.infrastructure.error.message.ErrorMessages
 import hs.kr.casper.configserver.infrastructure.exception.EntryException
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
@@ -35,7 +36,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
             ErrorResponse(
                 status = HttpStatus.NOT_FOUND,
-                error = "요청한 리소스를 찾을 수 없습니다",
+                error = ErrorMessages.ENTRY_NOT_FOUND,
                 path = req.requestURI
             )
         )
@@ -50,7 +51,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
             ErrorResponse(
                 status = HttpStatus.BAD_REQUEST,
-                error = "잘못된 요청입니다",
+                error = ErrorMessages.ENTRY_INVALID_REQUEST,
                 path = req.requestURI
             )
         )
@@ -63,7 +64,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(
             ErrorResponse(
                 status = status,
-                error = e.reason ?: "에러가 발생했습니다",
+                error = e.reason ?: ErrorMessages.ENTRY_INTERNAL_SERVER_ERROR,
                 path = req.requestURI
             )
         )
@@ -75,7 +76,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
             ErrorResponse(
                 status = HttpStatus.INTERNAL_SERVER_ERROR,
-                error = "서버 내부 오류가 발생했습니다",
+                error = ErrorMessages.ENTRY_INTERNAL_SERVER_ERROR,
                 path = req.requestURI
             )
         )

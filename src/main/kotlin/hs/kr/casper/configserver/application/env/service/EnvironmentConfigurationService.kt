@@ -9,6 +9,7 @@ import hs.kr.casper.configserver.application.env.port.out.RetrieveConfigurationP
 import hs.kr.casper.configserver.application.env.port.out.StoreConfigurationPort
 import hs.kr.casper.configserver.domain.env.model.EnvironmentConfiguration
 import hs.kr.casper.configserver.domain.env.model.enum.EnvironmentOperationType
+import hs.kr.casper.configserver.infrastructure.error.message.ErrorMessages
 import hs.kr.casper.configserver.infrastructure.exception.EntryException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -33,7 +34,7 @@ class EnvironmentConfigurationService(
             }
 
             if (duplicateKeys.isNotEmpty()) {
-                throw EntryException.conflict("이미 {${duplicateKeys.joinToString()}} 키가 존재합니다.")
+                throw EntryException.conflict(ErrorMessages.ENTRY_CONFLICT)
             }
 
             properties.entries.forEach { (key, value) ->
@@ -66,7 +67,7 @@ class EnvironmentConfigurationService(
         )
 
         if (configurations.isEmpty()) {
-            throw EntryException.notFound("해당하는 환경 설정이 없습니다.")
+            throw EntryException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
         }
 
         return EnvironmentConfigurationResponse(
@@ -92,7 +93,7 @@ class EnvironmentConfigurationService(
         )
 
         if (configuration.isEmpty()) {
-            throw EntryException.notFound("해당하는 환경 설정이 없습니다.")
+            throw EntryException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
         }
 
         return EnvironmentConfigurationResponse(
@@ -116,7 +117,7 @@ class EnvironmentConfigurationService(
         )
 
         if (configurations.isEmpty()) {
-            throw EntryException.notFound("해당하는 환경 설정이 없습니다.")
+            throw EntryException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
         }
 
         configurations.keys.forEach { key ->
@@ -151,7 +152,7 @@ class EnvironmentConfigurationService(
         )
 
         if (configuration.isEmpty()) {
-            throw EntryException.notFound("해당하는 환경 설정이 없습니다.")
+            throw EntryException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
         }
 
         removeConfigurationPort.removeConfiguration(
