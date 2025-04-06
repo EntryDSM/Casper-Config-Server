@@ -13,25 +13,36 @@ class SpringEncryptionAdapter(
     private val environment: Environment
 ) : EncryptionPort {
 
+    companion object {
+        private const val CIPHER_PREFIX = "{cipher}"
+        private const val ENCRYPT_KEY_PROPERTY = "encrypt.key"
+        private const val ENCRYPT_SALT_PROPERTY = "encrypt.salt"
+    }
+
     private val textEncryptor: TextEncryptor by lazy {
-        val key = environment.getProperty("encrypt.key") ?: throw EntryUtilsException.keyNotFound(ErrorMessages.ENTRY_KEY_NOT_FOUND)
-        val salt = environment.getProperty("encrypt.salt") ?: throw EntryUtilsException.saltNotFound(ErrorMessages.ENTRY_SALT_NOT_FOUND)
+        val key = environment.getProperty(ENCRYPT_KEY_PROPERTY)
+            ?: throw EntryUtilsException.keyNotFound(ErrorMessages.ENTRY_KEY_NOT_FOUND)
+
+        val salt = environment.getProperty(ENCRYPT_SALT_PROPERTY)
+            ?: throw EntryUtilsException.saltNotFound(ErrorMessages.ENTRY_SALT_NOT_FOUND)
+
         Encryptors.text(key, salt)
     }
 
     override fun encrypt(value: String): String {
-        return "{cipher}${textEncryptor.encrypt(value)}"
+        return "$CIPHER_PREFIX${textEncryptor.encrypt(value)}"
     }
 
     override fun decrypt(value: String): String {
         if (!isEncrypted(value)) {
             return value
         }
-        val encryptedValue = value.substring("{cipher}".length)
+
+        val encryptedValue = value.substring(CIPHER_PREFIX.length)
         return textEncryptor.decrypt(encryptedValue)
     }
 
     override fun isEncrypted(value: String): Boolean {
-        return value.startsWith("{cipher}")
+        return value.startsWith(CIPHER_PREFIX)
     }
 }
