@@ -24,7 +24,11 @@ class SpringEncryptionAdapter(
     }
 
     override fun decrypt(value: String): String {
-        return textEncryptor.decrypt(value)
+        if (!isEncrypted(value)) {
+            return value
+        }
+        val encryptedValue = value.substring("{cipher}".length)
+        return textEncryptor.decrypt(encryptedValue)
     }
 
     override fun isEncrypted(value: String): Boolean {
