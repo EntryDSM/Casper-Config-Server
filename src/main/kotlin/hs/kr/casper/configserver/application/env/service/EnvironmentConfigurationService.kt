@@ -41,8 +41,7 @@ class EnvironmentConfigurationService(
 
         properties.entries.forEach { (key, value) ->
             val encryptedValue = if (!encryptionPort.isEncrypted(value)) {
-                val encrypted = encryptionPort.encrypt(value)
-                "{cipher}$encrypted"
+                encryptionPort.encrypt(value)
             } else {
                 value
             }

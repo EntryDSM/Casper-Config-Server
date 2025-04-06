@@ -20,7 +20,7 @@ class SpringEncryptionAdapter(
     }
 
     override fun encrypt(value: String): String {
-        return textEncryptor.encrypt(value)
+        return "{cipher}${textEncryptor.encrypt(value)}"
     }
 
     override fun decrypt(value: String): String {
