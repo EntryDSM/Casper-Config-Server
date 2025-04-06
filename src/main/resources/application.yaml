@@ -13,7 +13,7 @@ spring:
     config:
       server:
         jdbc:
-          sql: SELECT PROP_KEY, VALUE from PROPERTIES where APPLICATION=? and PROFILE=? and LABEL=?
+          sql: SELECT prop_key, prop_value FROM tbl_environment_configuration WHERE application = ? AND profile = ? AND label = ?
           order: 1
         encrypt:
           enabled: true
@@ -48,4 +48,3 @@ logging:
     org.springframework.jdbc: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
