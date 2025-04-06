@@ -2,7 +2,7 @@ package hs.kr.casper.configserver.infrastructure.error.handler
 
 import hs.kr.casper.configserver.infrastructure.error.ErrorResponse
 import hs.kr.casper.configserver.infrastructure.error.message.ErrorMessages
-import hs.kr.casper.configserver.infrastructure.exception.EntryException
+import hs.kr.casper.configserver.infrastructure.exception.EntryHttpException
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -18,12 +18,12 @@ import org.springframework.web.servlet.NoHandlerFoundException
 class GlobalExceptionHandler {
     private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
-    @ExceptionHandler(EntryException::class)
-    fun handleEntryException(e: EntryException, req: HttpServletRequest): ResponseEntity<ErrorResponse> {
-        logger.error("[EntryException] STATUS: ${e.code}, MESSAGE: ${e.message}, PATH: ${req.requestURI}")
-        return ResponseEntity.status(e.code).body(
+    @ExceptionHandler(EntryHttpException::class)
+    fun handleEntryException(e: EntryHttpException, req: HttpServletRequest): ResponseEntity<ErrorResponse> {
+        logger.error("[EntryHttpException] STATUS: ${e.status}, MESSAGE: ${e.message}, PATH: ${req.requestURI}")
+        return ResponseEntity.status(e.status).body(
             ErrorResponse(
-                status = e.code,
+                status = e.status,
                 error = e.message,
                 path = req.requestURI
             )
