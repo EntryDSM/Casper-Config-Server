@@ -3,6 +3,7 @@ package hs.kr.casper.configserver.application.env.service
 import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentConfigurationResponse
 import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentOperationResponse
 import hs.kr.casper.configserver.application.env.port.`in`.EnvironmentConfigurationUseCase
+import hs.kr.casper.configserver.application.env.port.out.EncryptionPort
 import hs.kr.casper.configserver.application.env.port.out.ExistsConfigurationPort
 import hs.kr.casper.configserver.application.env.port.out.RemoveConfigurationPort
 import hs.kr.casper.configserver.application.env.port.out.RetrieveConfigurationPort
@@ -19,35 +20,43 @@ class EnvironmentConfigurationService(
     private val retrieveConfigurationPort: RetrieveConfigurationPort,
     private val storeConfigurationPort: StoreConfigurationPort,
     private val removeConfigurationPort: RemoveConfigurationPort,
-    private val existsConfigurationPort: ExistsConfigurationPort
+    private val existsConfigurationPort: ExistsConfigurationPort,
+    private val encryptionPort: EncryptionPort
 ): EnvironmentConfigurationUseCase {
 
-        @Transactional
-        override fun storeConfiguration(
-            application: String,
-            profile: String,
-            label: String,
-            properties: Map<String, String>
-        ): EnvironmentOperationResponse {
-            val duplicateKeys = properties.keys.filter { key ->
-                existsConfigurationPort.existsConfiguration(application, profile, label, key)
+    @Transactional
+    override fun storeConfiguration(
+        application: String,
+        profile: String,
+        label: String,
+        properties: Map<String, String>
+    ): EnvironmentOperationResponse {
+        val duplicateKeys = properties.keys.filter { key ->
+            existsConfigurationPort.existsConfiguration(application, profile, label, key)
+        }
+
+        if (duplicateKeys.isNotEmpty()) {
+            throw EntryException.conflict(ErrorMessages.ENTRY_CONFLICT)
+        }
+
+        properties.entries.forEach { (key, value) ->
+            val encryptedValue = if (!encryptionPort.isEncrypted(value)) {
+                val encrypted = encryptionPort.encrypt(value)
+                "{cipher}$encrypted"
+            } else {
+                value
             }
 
-            if (duplicateKeys.isNotEmpty()) {
-                throw EntryException.conflict(ErrorMessages.ENTRY_CONFLICT)
-            }
-
-            properties.entries.forEach { (key, value) ->
-                storeConfigurationPort.storeConfiguration(
-                    EnvironmentConfiguration(
-                        application = application,
-                        profile = profile,
-                        label = label,
-                        key = key,
-                        value = value
-                    )
+            storeConfigurationPort.storeConfiguration(
+                EnvironmentConfiguration(
+                    application = application,
+                    profile = profile,
+                    label = label,
+                    key = key,
+                    value = encryptedValue
                 )
-            }
+            )
+        }
 
         return EnvironmentOperationResponse(
             operation = EnvironmentOperationType.STORE
