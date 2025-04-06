@@ -12,4 +12,7 @@ object ErrorMessages {
     const val ENTRY_UNAUTHORIZED = "인증되지 않은 사용자입니다"
     const val ENTRY_FORBIDDEN = "권한이 없습니다"
     const val ENTRY_CONFLICT = "이미 존재하는 리소스입니다"
+
+    const val ENTRY_KEY_NOT_FOUND = "열쇠가 존재하지 않습니다"
+    const val ENTRY_SALT_NOT_FOUND = "소금이 존재하지 않습니다"
 }

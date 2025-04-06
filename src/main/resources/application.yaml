@@ -32,6 +32,7 @@ spring:
 
 encrypt:
   key: ${ENCRYPT_KEY}
+  salt: ${ENCRYPT_SALT}
 
 management:
   endpoints:
