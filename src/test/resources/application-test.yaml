@@ -1,28 +1,54 @@
+server:
+  port: 8888
+
 spring:
   main:
     allow-bean-definition-overriding: true
+  application:
+    name: Casper-Config-Server
+  web:
+    resources:
+      add-mappings: false
+  profiles:
+    active: jdbc
+  cloud:
+    config:
+      server:
+        jdbc:
+          sql: SELECT prop_key, prop_value FROM tbl_environment_configuration WHERE application = ? AND profile = ? AND label = ?
+          order: 1
+        encrypt:
+          enabled: true
   datasource:
-    url: jdbc:h2:mem:testdb
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: sa
-    password:
+    url: jdbc:${MYSQL_URL}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
   jpa:
+    open-in-view: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
-    show-sql: true
-  h2:
-    console:
-      enabled: true
+        dialect: org.hibernate.dialect.MySQLDialect
 
 encrypt:
-  key: aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899
-  salt: 0123456789abcdef0123456789abcdef
+  key: ${ENCRYPT_KEY}
+  salt: ${ENCRYPT_SALT}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh
+  endpoint:
+    health:
+      show-details: always
 
 logging:
   level:
-    org.springframework.cloud: DEBUG
+    org.springframework.cloud: INFO
+    org.springframework.jdbc: INFO
     org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
