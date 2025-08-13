@@ -13,7 +13,7 @@ class EncryptionConfig {
         return TextEncryptorLocator { _: Map<String, String> -> encryptor }
     }
 
-    @Bean
+    @Bean("customEncryptionController")
     fun encryptionController(textEncryptorLocator: TextEncryptorLocator): EncryptionController {
         return EncryptionController(textEncryptorLocator)
     }
