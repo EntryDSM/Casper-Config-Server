@@ -10,6 +10,7 @@ import org.springframework.security.crypto.encrypt.TextEncryptor
 @Configuration
 class EncryptionConfig {
     @Bean
+    @Primary
     fun textEncryptorLocator(encryptor: TextEncryptor): TextEncryptorLocator {
         return TextEncryptorLocator { _: Map<String, String> -> encryptor }
     }
