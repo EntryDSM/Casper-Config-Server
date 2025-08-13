@@ -1,0 +1,28 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+
+encrypt:
+  key: aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899
+  salt: 0123456789abcdef0123456789abcdef
+
+logging:
+  level:
+    org.springframework.cloud: DEBUG
+    org.hibernate.SQL: DEBUG
