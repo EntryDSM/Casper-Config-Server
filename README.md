@@ -35,7 +35,7 @@ ENCRYPT_SALT=your_encryption_salt_here
 > ⚠️ **보안 주의사항**: 실제 암호화 키와 솔트는 충분히 복잡하고 긴 값을 사용하세요.
 
 ## 데이터베이스 설정
-
+ 
 1. MySQL 데이터베이스 생성:
 ```sql
 CREATE DATABASE casper_config;
