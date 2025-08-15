@@ -9,7 +9,8 @@ Casper 생태계의 애플리케이션 설정을 관리하는 Spring Cloud Confi
 ## 주요 기능
 
 - **데이터베이스 기반 설정 저장** - MySQL에 설정 저장
-- **암호화 지원** - 민감한 데이터 암호화/복호화
+- **클라이언트 측 암호화** - 네트워크 전송 구간에서도 암호화 유지
+- **JWT 기반 관리 API 보안** - 관리용 API에 JWT 인증 적용
 - **프로필 기반 설정** - 환경별 다른 설정
 - **REST API** - 설정 CRUD 및 표준 Spring Cloud Config 엔드포인트
 - **상태 모니터링** - Actuator 엔드포인트를 통한 모니터링
@@ -30,6 +31,7 @@ MYSQL_USER=your_mysql_user
 MYSQL_PASSWORD=your_mysql_password
 ENCRYPT_KEY=your_encryption_key_here
 ENCRYPT_SALT=your_encryption_salt_here
+JWT_SECRET_KEY=your_jwt_secret_key_here
 ```
 
 > ⚠️ **보안 주의사항**: 실제 암호화 키와 솔트는 충분히 복잡하고 긴 값을 사용하세요.
@@ -235,10 +237,14 @@ GET /user-service/production/v1.0
 
 ## 클라이언트 애플리케이션 설정
 
-Spring Boot 클라이언트에서 사용하려면:
+### 🔐 클라이언트 측 복호화 설정
 
-**application.yml:**
+**bootstrap.yml (중요!):**
 ```yaml
+encrypt:
+  key: ${ENCRYPT_KEY}
+  salt: ${ENCRYPT_SALT}
+
 spring:
   application:
     name: myapp
@@ -252,4 +258,41 @@ spring:
       retry:
         initial-interval: 1000
         max-attempts: 6
+```
+
+**환경변수 설정:**
+```bash
+ENCRYPT_KEY=your_encryption_key_here
+ENCRYPT_SALT=your_encryption_salt_here
+```
+
+> 💡 **클라이언트에서 복호화**: 서버에서 암호화된 값을 전송하고, 클라이언트가 직접 복호화하여 네트워크 보안을 강화합니다.
+
+### 🔒 관리 API 인증
+
+관리용 API 사용 시 JWT 토큰이 필요합니다:
+
+**1. JWT 토큰 발급:**
+```http
+POST http://localhost:8888/auth/token
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "config-admin-2024"
+}
+```
+
+**2. 관리 API 사용:**
+```http
+POST http://localhost:8888/api/env
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+
+{
+    "application": "myapp",
+    "profile": "dev",
+    "label": "main",
+    "properties": { ... }
+}
 ```
