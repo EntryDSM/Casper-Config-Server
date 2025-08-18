@@ -20,6 +20,13 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        // Public endpoints - skip JWT validation
+        val requestPath = request.requestURI
+        if (isPublicEndpoint(requestPath)) {
+            filterChain.doFilter(request, response)
+            return
+        }
+        
         val token = extractTokenFromRequest(request)
         
         if (token != null && jwtTokenProvider.validateToken(token)) {
@@ -39,6 +46,18 @@ class JwtAuthenticationFilter(
         }
         
         filterChain.doFilter(request, response)
+    }
+    
+    private fun isPublicEndpoint(path: String): Boolean {
+        val publicPaths = listOf(
+            "/auth/token",
+            "/actuator/health"
+        )
+        
+        // Spring Cloud Config paths
+        val configPathPattern = Regex("^/[^/]+/[^/]+(/[^/]+)?$")
+        
+        return publicPaths.any { path == it } || configPathPattern.matches(path)
     }
     
     private fun extractTokenFromRequest(request: HttpServletRequest): String? {
