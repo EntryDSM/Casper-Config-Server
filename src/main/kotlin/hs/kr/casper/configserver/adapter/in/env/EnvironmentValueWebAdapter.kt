@@ -6,6 +6,8 @@ import hs.kr.casper.configserver.adapter.`in`.env.dto.response.EnvironmentOperat
 import hs.kr.casper.configserver.application.env.port.`in`.EnvironmentConfigurationUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.*
 
 
 @RestController
@@ -23,13 +26,16 @@ class EnvironmentValueWebAdapter(
     @PostMapping
     fun storeEnvironmentConfiguration(
         @RequestBody
-        environmentConfigurationRequest: EnvironmentConfigurationRequest
+        environmentConfigurationRequest: EnvironmentConfigurationRequest,
+        authentication: Authentication
     ): ResponseEntity<EnvironmentOperationResponse> {
+        val userId = UUID.fromString(authentication.name)
         val response = environmentConfigurationUseCase.storeConfiguration(
             application = environmentConfigurationRequest.application,
             profile = environmentConfigurationRequest.profile,
             label = environmentConfigurationRequest.label,
-            properties = environmentConfigurationRequest.properties
+            properties = environmentConfigurationRequest.properties,
+            userId = userId
         )
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
@@ -41,12 +47,17 @@ class EnvironmentValueWebAdapter(
         @PathVariable
         profile: String,
         @PathVariable
-        label: String
+        label: String,
+        authentication: Authentication
     ): ResponseEntity<EnvironmentConfigurationResponse> {
+        val userId = UUID.fromString(authentication.name)
+        val isAdmin = authentication.authorities.contains(SimpleGrantedAuthority("ROLE_CONFIG_ADMIN"))
         val response = environmentConfigurationUseCase.retrieveEnvironmentConfigurations(
             application = application,
             profile = profile,
-            label = label
+            label = label,
+            userId = userId,
+            isAdmin = isAdmin
         )
         return ResponseEntity.ok(response)
     }
@@ -60,13 +71,18 @@ class EnvironmentValueWebAdapter(
         @PathVariable
         label: String,
         @PathVariable
-        key: String
+        key: String,
+        authentication: Authentication
     ): ResponseEntity<EnvironmentConfigurationResponse> {
+        val userId = UUID.fromString(authentication.name)
+        val isAdmin = authentication.authorities.contains(SimpleGrantedAuthority("ROLE_CONFIG_ADMIN"))
         val response = environmentConfigurationUseCase.retrieveEnvironmentConfiguration(
             application = application,
             profile = profile,
             label = label,
-            key = key
+            key = key,
+            userId = userId,
+            isAdmin = isAdmin
         )
         return ResponseEntity.ok(response)
     }
@@ -78,12 +94,17 @@ class EnvironmentValueWebAdapter(
         @PathVariable
         profile: String,
         @PathVariable
-        label: String
+        label: String,
+        authentication: Authentication
     ): ResponseEntity<EnvironmentOperationResponse> {
+        val userId = UUID.fromString(authentication.name)
+        val isAdmin = authentication.authorities.contains(SimpleGrantedAuthority("ROLE_CONFIG_ADMIN"))
         val response = environmentConfigurationUseCase.removeConfigurations(
-            application,
-            profile,
-            label
+            application = application,
+            profile = profile,
+            label = label,
+            userId = userId,
+            isAdmin = isAdmin
         )
         return ResponseEntity.ok(response)
     }
@@ -97,13 +118,18 @@ class EnvironmentValueWebAdapter(
         @PathVariable
         label: String,
         @PathVariable
-        key: String
+        key: String,
+        authentication: Authentication
     ): ResponseEntity<EnvironmentOperationResponse> {
+        val userId = UUID.fromString(authentication.name)
+        val isAdmin = authentication.authorities.contains(SimpleGrantedAuthority("ROLE_CONFIG_ADMIN"))
         val response = environmentConfigurationUseCase.removeConfiguration(
             application = application,
             profile = profile,
             label = label,
-            key = key
+            key = key,
+            userId = userId,
+            isAdmin = isAdmin
         )
         return ResponseEntity.ok(response)
     }

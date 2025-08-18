@@ -8,6 +8,7 @@ import hs.kr.casper.configserver.application.env.port.out.StoreConfigurationPort
 import hs.kr.casper.configserver.domain.env.model.EnvironmentConfiguration
 import hs.kr.casper.configserver.infrastructure.persistence.env.EnvironmentConfigurationJpaEntity
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class EnvironmentConfigurationAdapter(
@@ -63,6 +64,36 @@ class EnvironmentConfigurationAdapter(
         ).associate { it.key to it.value }
     }
 
+    override fun retrieveConfigurationByUser(
+        application: String,
+        profile: String,
+        label: String,
+        key: String,
+        userId: UUID
+    ): Map<String, String> {
+        return environmentConfigurationRepository.findByApplicationAndProfileAndLabelAndKeyAndCreatedBy(
+            application,
+            profile,
+            label,
+            key,
+            userId
+        ).associate { it.key to it.value }.toMap()
+    }
+
+    override fun retrieveConfigurationsByUser(
+        application: String,
+        profile: String,
+        label: String,
+        userId: UUID
+    ): Map<String, String> {
+        return environmentConfigurationRepository.findByApplicationAndProfileAndLabelAndCreatedBy(
+            application,
+            profile,
+            label,
+            userId
+        ).associate { it.key to it.value }
+    }
+
     override fun removeConfiguration(
         configuration: EnvironmentConfiguration
     ): EnvironmentConfigurationJpaEntity {
@@ -88,7 +119,8 @@ class EnvironmentConfigurationAdapter(
                     profile = profile,
                     label = label,
                     key = key,
-                    value = configurations.getValue(key)
+                    value = configurations.getValue(key),
+                    user = UUID.randomUUID()
                 )
             )
         }

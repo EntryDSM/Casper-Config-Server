@@ -55,6 +55,7 @@ CREATE TABLE tbl_environment_configuration (
 );
 ```
 
+
 ## 애플리케이션 실행
 
 ### 로컬 개발 환경

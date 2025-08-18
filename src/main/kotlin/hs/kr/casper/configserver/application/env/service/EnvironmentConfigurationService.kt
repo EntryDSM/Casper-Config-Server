@@ -14,6 +14,7 @@ import hs.kr.casper.configserver.infrastructure.error.message.ErrorMessages
 import hs.kr.casper.configserver.infrastructure.exception.EntryHttpException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
 class EnvironmentConfigurationService(
@@ -29,7 +30,8 @@ class EnvironmentConfigurationService(
         application: String,
         profile: String,
         label: String,
-        properties: Map<String, String>
+        properties: Map<String, String>,
+        userId: UUID
     ): EnvironmentOperationResponse {
         val duplicateKeys = properties.keys.filter { key ->
             existsConfigurationPort.existsConfiguration(application, profile, label, key)
@@ -52,7 +54,8 @@ class EnvironmentConfigurationService(
                     profile = profile,
                     label = label,
                     key = key,
-                    value = encryptedValue
+                    value = encryptedValue,
+                    user = userId
                 )
             )
         }
@@ -66,13 +69,24 @@ class EnvironmentConfigurationService(
     override fun retrieveEnvironmentConfigurations(
         application: String,
         profile: String,
-        label: String
+        label: String,
+        userId: UUID,
+        isAdmin: Boolean
     ): EnvironmentConfigurationResponse {
-        val configurations = retrieveConfigurationPort.retrieveConfigurations(
-            application = application,
-            profile = profile,
-            label = label,
-        )
+        val configurations = if (isAdmin) {
+            retrieveConfigurationPort.retrieveConfigurations(
+                application = application,
+                profile = profile,
+                label = label,
+            )
+        } else {
+            retrieveConfigurationPort.retrieveConfigurationsByUser(
+                application = application,
+                profile = profile,
+                label = label,
+                userId = userId
+            )
+        }
 
         if (configurations.isEmpty()) {
             throw EntryHttpException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
@@ -91,14 +105,26 @@ class EnvironmentConfigurationService(
         application: String,
         profile: String,
         label: String,
-        key: String
+        key: String,
+        userId: UUID,
+        isAdmin: Boolean
     ): EnvironmentConfigurationResponse {
-        val configuration = retrieveConfigurationPort.retrieveConfiguration(
-            application = application,
-            profile = profile,
-            label = label,
-            key = key
-        )
+        val configuration = if (isAdmin) {
+            retrieveConfigurationPort.retrieveConfiguration(
+                application = application,
+                profile = profile,
+                label = label,
+                key = key
+            )
+        } else {
+            retrieveConfigurationPort.retrieveConfigurationByUser(
+                application = application,
+                profile = profile,
+                label = label,
+                key = key,
+                userId = userId
+            )
+        }
 
         if (configuration.isEmpty()) {
             throw EntryHttpException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
@@ -116,13 +142,24 @@ class EnvironmentConfigurationService(
     override fun removeConfigurations(
         application: String,
         profile: String,
-        label: String
+        label: String,
+        userId: UUID,
+        isAdmin: Boolean
     ): EnvironmentOperationResponse {
-        val configurations = retrieveConfigurationPort.retrieveConfigurations(
-            application = application,
-            profile = profile,
-            label = label
-        )
+        val configurations = if (isAdmin) {
+            retrieveConfigurationPort.retrieveConfigurations(
+                application = application,
+                profile = profile,
+                label = label
+            )
+        } else {
+            retrieveConfigurationPort.retrieveConfigurationsByUser(
+                application = application,
+                profile = profile,
+                label = label,
+                userId = userId
+            )
+        }
 
         if (configurations.isEmpty()) {
             throw EntryHttpException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
@@ -135,7 +172,8 @@ class EnvironmentConfigurationService(
                     profile = profile,
                     label = label,
                     key = key,
-                    value = configurations.getValue(key)
+                    value = configurations.getValue(key),
+                    user = userId
                 )
             )
         }
@@ -150,14 +188,26 @@ class EnvironmentConfigurationService(
         application: String,
         profile: String,
         label: String,
-        key: String
+        key: String,
+        userId: UUID,
+        isAdmin: Boolean
     ): EnvironmentOperationResponse {
-        val configuration = retrieveConfigurationPort.retrieveConfiguration(
-            application = application,
-            profile = profile,
-            label = label,
-            key = key
-        )
+        val configuration = if (isAdmin) {
+            retrieveConfigurationPort.retrieveConfiguration(
+                application = application,
+                profile = profile,
+                label = label,
+                key = key
+            )
+        } else {
+            retrieveConfigurationPort.retrieveConfigurationByUser(
+                application = application,
+                profile = profile,
+                label = label,
+                key = key,
+                userId = userId
+            )
+        }
 
         if (configuration.isEmpty()) {
             throw EntryHttpException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
@@ -169,7 +219,8 @@ class EnvironmentConfigurationService(
                 profile = profile,
                 label = label,
                 key = key,
-                value = configuration[key]!!
+                value = configuration[key]!!,
+                user = userId
             )
         )
 
