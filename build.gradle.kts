@@ -42,6 +42,7 @@ dependencies {
     implementation(Dependencies.Lombok.LOMBOK)
 
     implementation(Dependencies.Spring.SECURITY)
+    implementation(Dependencies.Swagger.SPRINGDOC_OPENAPI)
 
     runtimeOnly(Dependencies.MySQL.CONNECTOR_JAVA)
 

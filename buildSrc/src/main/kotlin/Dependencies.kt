@@ -36,10 +36,8 @@
         object Testing {
             const val JUNIT_PLATFORM_LAUNCHER = "org.junit.platform:junit-platform-launcher"
         }
-
-        object JWT {
-            const val JJWT_API = "io.jsonwebtoken:jjwt-api:0.12.3"
-            const val JJWT_IMPL = "io.jsonwebtoken:jjwt-impl:0.12.3"
-            const val JJWT_JACKSON = "io.jsonwebtoken:jjwt-jackson:0.12.3"
+        
+        object Swagger {
+            const val SPRINGDOC_OPENAPI = "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0"
         }
     }

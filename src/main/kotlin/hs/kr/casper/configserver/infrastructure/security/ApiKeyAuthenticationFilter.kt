@@ -34,12 +34,25 @@ class ApiKeyAuthenticationFilter(
     
     private fun isPublicEndpoint(path: String): Boolean {
         val publicPaths = listOf(
-            "/actuator/health"
+            "/actuator/health",
+            "/swagger-ui.html",
+            "/swagger-ui/",
+            "/api-docs",
+            "/v3/api-docs"
         )
         
+        // Spring Cloud Config paths
         val configPathPattern = Regex("^/[^/]+/[^/]+(/[^/]+)?$")
         
-        return publicPaths.any { path == it } || configPathPattern.matches(path)
+        // Swagger UI paths
+        val swaggerPathPatterns = listOf(
+            Regex("^/swagger-ui/.*$"),
+            Regex("^/v3/api-docs.*$")
+        )
+        
+        return publicPaths.any { path == it } || 
+               configPathPattern.matches(path) ||
+               swaggerPathPatterns.any { it.matches(path) }
     }
     
     private fun extractApiKeyFromRequest(request: HttpServletRequest): String? {
