@@ -9,6 +9,8 @@ interface EnvironmentConfigurationUseCase {
 
     fun storeConfiguration(application: String, profile: String, label: String, properties: Map<String, String>): EnvironmentOperationResponse
 
+    fun updateConfiguration(application: String, profile: String, label: String, properties: Map<String, String>): EnvironmentOperationResponse
+
     fun removeConfigurations(application: String, profile: String, label: String): EnvironmentOperationResponse
 
     fun removeConfiguration(application: String, profile: String, label: String, key: String): EnvironmentOperationResponse

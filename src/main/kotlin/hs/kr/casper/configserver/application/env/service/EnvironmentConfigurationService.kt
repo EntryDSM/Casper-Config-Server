@@ -8,6 +8,7 @@ import hs.kr.casper.configserver.application.env.port.out.ExistsConfigurationPor
 import hs.kr.casper.configserver.application.env.port.out.RemoveConfigurationPort
 import hs.kr.casper.configserver.application.env.port.out.RetrieveConfigurationPort
 import hs.kr.casper.configserver.application.env.port.out.StoreConfigurationPort
+import hs.kr.casper.configserver.application.env.port.out.UpdateConfigurationPort
 import hs.kr.casper.configserver.domain.env.model.EnvironmentConfiguration
 import hs.kr.casper.configserver.domain.env.model.enum.EnvironmentOperationType
 import hs.kr.casper.configserver.infrastructure.error.message.ErrorMessages
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 class EnvironmentConfigurationService(
     private val retrieveConfigurationPort: RetrieveConfigurationPort,
     private val storeConfigurationPort: StoreConfigurationPort,
+    private val updateConfigurationPort: UpdateConfigurationPort,
     private val removeConfigurationPort: RemoveConfigurationPort,
     private val existsConfigurationPort: ExistsConfigurationPort,
     private val encryptionPort: EncryptionPort
@@ -59,6 +61,47 @@ class EnvironmentConfigurationService(
 
         return EnvironmentOperationResponse(
             operation = EnvironmentOperationType.STORE
+        )
+    }
+
+    @Transactional
+    override fun updateConfiguration(
+        application: String,
+        profile: String,
+        label: String,
+        properties: Map<String, String>
+    ): EnvironmentOperationResponse {
+        properties.entries.forEach { (key, value) ->
+            val existingConfig = retrieveConfigurationPort.retrieveConfiguration(
+                application = application,
+                profile = profile,
+                label = label,
+                key = key
+            )
+            
+            if (existingConfig.isEmpty()) {
+                throw EntryHttpException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
+            }
+            
+            val encryptedValue = if (!encryptionPort.isEncrypted(value)) {
+                encryptionPort.encrypt(value)
+            } else {
+                value
+            }
+
+            updateConfigurationPort.updateConfiguration(
+                EnvironmentConfiguration(
+                    application = application,
+                    profile = profile,
+                    label = label,
+                    key = key,
+                    value = encryptedValue
+                )
+            )
+        }
+
+        return EnvironmentOperationResponse(
+            operation = EnvironmentOperationType.UPDATE
         )
     }
 

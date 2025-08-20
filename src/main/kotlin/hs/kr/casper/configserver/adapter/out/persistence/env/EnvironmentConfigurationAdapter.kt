@@ -5,16 +5,16 @@ import hs.kr.casper.configserver.application.env.port.out.ExistsConfigurationPor
 import hs.kr.casper.configserver.application.env.port.out.RemoveConfigurationPort
 import hs.kr.casper.configserver.application.env.port.out.RetrieveConfigurationPort
 import hs.kr.casper.configserver.application.env.port.out.StoreConfigurationPort
+import hs.kr.casper.configserver.application.env.port.out.UpdateConfigurationPort
 import hs.kr.casper.configserver.domain.env.model.EnvironmentConfiguration
 import hs.kr.casper.configserver.infrastructure.persistence.env.EnvironmentConfigurationJpaEntity
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class EnvironmentConfigurationAdapter(
     private val environmentConfigurationRepository: EnvironmentConfigurationRepository,
     private val environmentConfigurationMapper: EnvironmentConfigurationMapper
-): RemoveConfigurationPort, RetrieveConfigurationPort, StoreConfigurationPort, ExistsConfigurationPort {
+): RemoveConfigurationPort, RetrieveConfigurationPort, StoreConfigurationPort, UpdateConfigurationPort, ExistsConfigurationPort {
 
     override fun storeConfiguration(
         configuration: EnvironmentConfiguration
@@ -64,34 +64,12 @@ class EnvironmentConfigurationAdapter(
         ).associate { it.key to it.value }
     }
 
-    override fun retrieveConfigurationByUser(
-        application: String,
-        profile: String,
-        label: String,
-        key: String,
-        userId: UUID
-    ): Map<String, String> {
-        return environmentConfigurationRepository.findByApplicationAndProfileAndLabelAndKeyAndCreatedBy(
-            application,
-            profile,
-            label,
-            key,
-            userId
-        ).associate { it.key to it.value }.toMap()
-    }
-
-    override fun retrieveConfigurationsByUser(
-        application: String,
-        profile: String,
-        label: String,
-        userId: UUID
-    ): Map<String, String> {
-        return environmentConfigurationRepository.findByApplicationAndProfileAndLabelAndCreatedBy(
-            application,
-            profile,
-            label,
-            userId
-        ).associate { it.key to it.value }
+    override fun updateConfiguration(
+        configuration: EnvironmentConfiguration
+    ): EnvironmentConfigurationJpaEntity {
+        return environmentConfigurationRepository.save(
+            environmentConfigurationMapper.toEntity(configuration)
+        )
     }
 
     override fun removeConfiguration(
