@@ -42,9 +42,6 @@ dependencies {
     implementation(Dependencies.Lombok.LOMBOK)
 
     implementation(Dependencies.Spring.SECURITY)
-    implementation(Dependencies.JWT.JJWT_API)
-    implementation(Dependencies.JWT.JJWT_IMPL)
-    implementation(Dependencies.JWT.JJWT_JACKSON)
 
     runtimeOnly(Dependencies.MySQL.CONNECTOR_JAVA)
 

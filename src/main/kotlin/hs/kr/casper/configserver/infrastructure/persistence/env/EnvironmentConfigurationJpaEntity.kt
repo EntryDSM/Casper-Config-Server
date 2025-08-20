@@ -54,12 +54,5 @@ data class EnvironmentConfigurationJpaEntity(
         nullable = false,
         columnDefinition = "TEXT"
     )
-    val value: String,
-
-    @Column(
-        name = "created_by",
-        nullable = false,
-        columnDefinition = "BINARY(16)"
-    )
-    val createdBy: UUID,
+    val value: String
 )

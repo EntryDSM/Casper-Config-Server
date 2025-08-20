@@ -120,7 +120,6 @@ class EnvironmentConfigurationAdapter(
                     label = label,
                     key = key,
                     value = configurations.getValue(key),
-                    user = UUID.randomUUID()
                 )
             )
         }

@@ -14,7 +14,6 @@ import hs.kr.casper.configserver.infrastructure.error.message.ErrorMessages
 import hs.kr.casper.configserver.infrastructure.exception.EntryHttpException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
 
 @Service
 class EnvironmentConfigurationService(
@@ -30,8 +29,7 @@ class EnvironmentConfigurationService(
         application: String,
         profile: String,
         label: String,
-        properties: Map<String, String>,
-        userId: UUID
+        properties: Map<String, String>
     ): EnvironmentOperationResponse {
         val duplicateKeys = properties.keys.filter { key ->
             existsConfigurationPort.existsConfiguration(application, profile, label, key)
@@ -55,7 +53,6 @@ class EnvironmentConfigurationService(
                     label = label,
                     key = key,
                     value = encryptedValue,
-                    user = userId
                 )
             )
         }
@@ -69,24 +66,13 @@ class EnvironmentConfigurationService(
     override fun retrieveEnvironmentConfigurations(
         application: String,
         profile: String,
-        label: String,
-        userId: UUID,
-        isAdmin: Boolean
+        label: String
     ): EnvironmentConfigurationResponse {
-        val configurations = if (isAdmin) {
-            retrieveConfigurationPort.retrieveConfigurations(
-                application = application,
-                profile = profile,
-                label = label,
-            )
-        } else {
-            retrieveConfigurationPort.retrieveConfigurationsByUser(
-                application = application,
-                profile = profile,
-                label = label,
-                userId = userId
-            )
-        }
+        val configurations = retrieveConfigurationPort.retrieveConfigurations(
+            application = application,
+            profile = profile,
+            label = label
+        )
 
         if (configurations.isEmpty()) {
             throw EntryHttpException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
@@ -105,26 +91,14 @@ class EnvironmentConfigurationService(
         application: String,
         profile: String,
         label: String,
-        key: String,
-        userId: UUID,
-        isAdmin: Boolean
+        key: String
     ): EnvironmentConfigurationResponse {
-        val configuration = if (isAdmin) {
-            retrieveConfigurationPort.retrieveConfiguration(
-                application = application,
-                profile = profile,
-                label = label,
-                key = key
-            )
-        } else {
-            retrieveConfigurationPort.retrieveConfigurationByUser(
-                application = application,
-                profile = profile,
-                label = label,
-                key = key,
-                userId = userId
-            )
-        }
+        val configuration = retrieveConfigurationPort.retrieveConfiguration(
+            application = application,
+            profile = profile,
+            label = label,
+            key = key
+        )
 
         if (configuration.isEmpty()) {
             throw EntryHttpException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
@@ -142,24 +116,13 @@ class EnvironmentConfigurationService(
     override fun removeConfigurations(
         application: String,
         profile: String,
-        label: String,
-        userId: UUID,
-        isAdmin: Boolean
+        label: String
     ): EnvironmentOperationResponse {
-        val configurations = if (isAdmin) {
-            retrieveConfigurationPort.retrieveConfigurations(
-                application = application,
-                profile = profile,
-                label = label
-            )
-        } else {
-            retrieveConfigurationPort.retrieveConfigurationsByUser(
-                application = application,
-                profile = profile,
-                label = label,
-                userId = userId
-            )
-        }
+        val configurations = retrieveConfigurationPort.retrieveConfigurations(
+            application = application,
+            profile = profile,
+            label = label
+        )
 
         if (configurations.isEmpty()) {
             throw EntryHttpException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
@@ -173,7 +136,6 @@ class EnvironmentConfigurationService(
                     label = label,
                     key = key,
                     value = configurations.getValue(key),
-                    user = userId
                 )
             )
         }
@@ -188,26 +150,14 @@ class EnvironmentConfigurationService(
         application: String,
         profile: String,
         label: String,
-        key: String,
-        userId: UUID,
-        isAdmin: Boolean
+        key: String
     ): EnvironmentOperationResponse {
-        val configuration = if (isAdmin) {
-            retrieveConfigurationPort.retrieveConfiguration(
-                application = application,
-                profile = profile,
-                label = label,
-                key = key
-            )
-        } else {
-            retrieveConfigurationPort.retrieveConfigurationByUser(
-                application = application,
-                profile = profile,
-                label = label,
-                key = key,
-                userId = userId
-            )
-        }
+        val configuration = retrieveConfigurationPort.retrieveConfiguration(
+            application = application,
+            profile = profile,
+            label = label,
+            key = key
+        )
 
         if (configuration.isEmpty()) {
             throw EntryHttpException.notFound(ErrorMessages.ENTRY_NOT_FOUND)
@@ -220,7 +170,6 @@ class EnvironmentConfigurationService(
                 label = label,
                 key = key,
                 value = configuration[key]!!,
-                user = userId
             )
         )
 

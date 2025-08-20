@@ -8,8 +8,5 @@ data class EnvironmentConfiguration(
     val profile: String,
     val label: String,
     val key: String,
-    val value: String,
-    val user: UUID
-) {
-
-}
+    val value: String
+)
