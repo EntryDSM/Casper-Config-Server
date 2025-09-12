@@ -70,7 +70,6 @@ CREATE TABLE tbl_environment_configuration (
 ## API 사용법 (Postman)
 
 ### 1. 환경설정 관리 API
-
 #### 환경설정 저장
 ```http
 POST http://localhost:8888/api/env
